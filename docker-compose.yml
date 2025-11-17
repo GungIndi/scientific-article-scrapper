@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  scraper:
+    build: ./scraper
+    container_name: scraper_app
+    depends_on:
+      - mongo
+    # Keep stdin open for interactive CLI
+    tty: true
+    stdin_open: true
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
