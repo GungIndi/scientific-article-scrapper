@@ -1,12 +1,25 @@
 version: '3.8'
 
 services:
-  scraper:
-    build: ./scraper
-    container_name: scraper_app
+  api:
+    build: .
+    container_name: scraper_api
+    command: python main.py api
+    ports:
+      - "8000:8000"
     depends_on:
       - mongo
-    # Keep stdin open for interactive CLI
+    # Environment variables for FastAPI (optional, but good practice)
+    environment:
+      - PYTHONUNBUFFERED=1 # Ensure Python output is unbuffered
+      - LOG_LEVEL=info
+
+  cli:
+    build: .
+    container_name: scraper_cli
+    command: python main.py cli
+    depends_on:
+      - mongo
     tty: true
     stdin_open: true
 
