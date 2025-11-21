@@ -4,8 +4,8 @@ import time
 import re
 from bs4 import BeautifulSoup
 
-import config
-import database
+from . import config
+from . import database
 
 session = requests.Session()
 session.headers.update(config.SINTA_HEADERS)

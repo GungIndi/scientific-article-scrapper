@@ -1,7 +1,7 @@
 # database.py
 import json
 from pymongo import MongoClient
-import config
+from . import config
 
 _db = None
 
@@ -95,33 +95,51 @@ def get_sinta_journals_for_garuda_search(collection_name):
         "garuda_link": {"$exists": True, "$ne": "no garuda link"}
     }))
 
-def export_collection_to_json(collection_name):
-    """Exports all documents from a collection to a JSON file."""
-    db = get_db()
-    if db is None:
-        print("💔 Cannot export, no database connection.")
+import os
+
+def export_collection_to_json_file(collection_name):
+    """Exports all documents from a collection to a JSON file in the 'exports' directory."""
+    documents = export_collection_to_json(collection_name)
+    if documents is None:
+        # The export_collection_to_json function already prints the error message
         return
 
-    if collection_name not in list_collections():
-        print(f"❌ Collection '{collection_name}' not found.")
-        return
-
-    collection = db[collection_name]
-    documents = list(collection.find({}))
-    
     if not documents:
         print(f"No documents found in collection '{collection_name}'.")
         return
 
-    # Convert ObjectId to string for JSON serialization
-    for doc in documents:
-        if '_id' in doc:
-            doc['_id'] = str(doc['_id'])
+    # Ensure the root 'exports' directory exists
+    output_dir = "exports"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-    output_path = f"exports/{collection_name}.json"
+    output_path = os.path.join(output_dir, f"{collection_name.replace(' ', '_')}.json")
     try:
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(documents, f, indent=2, ensure_ascii=False)
         print(f"✅ Successfully exported {len(documents)} documents to '{output_path}'.")
     except IOError as e:
         print(f"❌ Failed to write to file: {e}")
+
+
+def export_collection_to_json(collection_name):
+    """Fetches all documents from a collection and returns them as a list."""
+    db = get_db()
+    if db is None:
+        print("💔 Cannot export, no database connection.")
+        return None
+
+    if collection_name not in list_collections():
+        print(f"❌ Collection '{collection_name}' not found.")
+        return None
+
+    collection = db[collection_name]
+    documents = list(collection.find({}))
+    
+    # Convert ObjectId to string for JSON serialization
+    for doc in documents:
+        if '_id' in doc:
+            doc['_id'] = str(doc['_id'])
+            
+    return documents
+

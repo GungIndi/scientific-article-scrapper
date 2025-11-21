@@ -20,3 +20,9 @@ MONGO_URI = "mongodb://localhost:27017/"
 MONGO_DATABASE = "journal_scraper"
 SINTA_JOURNALS_COLLECTION = "sinta_journals"
 GARUDA_ARTICLES_COLLECTION = "garuda_articles"
+
+# Security Configuration
+# Set DELETE_PASSWORD environment variable for production
+# Example: export DELETE_PASSWORD="your_secure_password"
+import os
+DELETE_PASSWORD = os.getenv("DELETE_PASSWORD", "admin123")  # Default: admin123 (change in production!)
