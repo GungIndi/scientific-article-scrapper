@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '../components/ui/Card';
 import PasswordModal from '../components/ui/PasswordModal';
+import CollectionDetailsModal from '../components/ui/CollectionDetailsModal';
 import { Database, Download, RefreshCw, FileJson, BookOpen, FileText, Trash2 } from 'lucide-react';
 import axios from 'axios';
 
@@ -10,6 +11,7 @@ const Collections = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, collection: null });
+  const [detailsModal, setDetailsModal] = useState({ isOpen: false, collection: null });
 
   const fetchCollections = async () => {
     setLoading(true);
@@ -120,9 +122,12 @@ const Collections = () => {
 
         <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center">
           <span className="text-xs text-gray-500">Ready for export</span>
-          <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            onClick={() => setDetailsModal({ isOpen: true, collection: col })}
+            className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity hover:underline"
+          >
             View Details &rarr;
-          </span>
+          </button>
         </div>
       </Card>
     );
@@ -213,6 +218,13 @@ const Collections = () => {
         onClose={() => setDeleteModal({ isOpen: false, collection: null })}
         onConfirm={handleDeleteConfirm}
         collectionName={deleteModal.collection ? deleteModal.collection.replace(/_/g, ' ') : ''}
+      />
+
+      {/* Collection Details Modal */}
+      <CollectionDetailsModal
+        isOpen={detailsModal.isOpen}
+        onClose={() => setDetailsModal({ isOpen: false, collection: null })}
+        collectionName={detailsModal.collection}
       />
     </div>
   );
