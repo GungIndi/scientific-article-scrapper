@@ -82,8 +82,15 @@ const Collections = () => {
   };
 
   const CollectionCard = ({ col, index, icon: Icon, iconColor }) => {
-    // Format collection name: replace underscores with spaces for display
-    const displayName = col.replace(/_/g, ' ');
+    // Format collection name: replace underscores with spaces and apply title case
+    const toTitleCase = (str) => {
+      return str.replace(/_/g, ' ')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    };
+    
+    const displayName = toTitleCase(col);
     
     const handleDelete = () => {
       setDeleteModal({ isOpen: true, collection: col });
